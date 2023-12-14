@@ -11,6 +11,7 @@ import {
   Routes,
   Route
 } from "react-router-dom";
+import Transaction from './components/Transaction';
 
 // import React, { useState } from 'react'
 
@@ -30,6 +31,7 @@ function App() {
             <Route exact path='/' element={<Home />}> </Route>
             <Route exact path='/infoofitem' element={<InfoOfItem />}> </Route>
             <Route exact path='/profile' element={<Profile />}> </Route>
+            <Route exact path='/transaction' element={<Transaction />}> </Route>
           </Routes>
         </Router>
       </NoteState>

@@ -99,7 +99,7 @@ const login = async (req, res) => {
     if (await bcrypt.compare(req.body.password, user.password)) {
       const token = jwt.sign(user.dataValues, process.env.ACCESS_TOKEN);
       console.log(user.dataValues);
-      res.json({ accessToken: token, uid: user.dataValues.id, err: null });
+      res.json({ accessToken: token, uid: user.dataValues.id,isAdmin:user.dataValues.isAdmin, err: null });
     } else {
       res.json({ err: "Provide correct password" });
     }

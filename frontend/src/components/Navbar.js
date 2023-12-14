@@ -8,21 +8,18 @@ export default function Navbar() {
   const [password, setPassword] = useState("");
   const [FirstName, setFirstName] = useState("");
   const [LastName, setLastName] = useState("");
-  const [UserName, setUserName] = useState("");
+  const [RegistrationID, setRegistrationID] = useState("");
   const [UserContact, setUserContact] = useState("");
   const [ConfirmPassword, setConfirm] = useState(0);
   const [newEmail, setNewEmail] = useState("");
   const [passwordDifficulty, setPasswordDifficulty] = useState(0);
   const [passwordDifficultyForLogin, setPasswordDifficultyForLogin] =
     useState(0);
-
-  const [infoInSearch, setinfoInSearch] = useState("");
   const [newPassword1, setNewPassword] = useState("");
   const [newCPassword, setNewCPassword] = useState("");
   const [validedContact, setValidContact] = useState(0);
-  const [categories, setCategories] = useState([]);
   const [isLogIn, setIsLogIn] = useState(0);
-  const [searchedArr, setsearchedArr] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(0);
 
   const a = useContext(noteContext);
 
@@ -42,14 +39,11 @@ export default function Navbar() {
     let LastName = document.getElementById("LastName").value;
     setLastName(LastName);
   };
-  const userName = () => {
-    let UserName = document.getElementById("userName").value;
-    setUserName(UserName);
+  const registrationID = () => {
+    let RegistrationID = document.getElementById("registrationID").value;
+    setRegistrationID(RegistrationID);
   };
-  const Search = () => {
-    let Information_search = document.getElementById("searchinfoinurl").value;
-    setinfoInSearch(Information_search);
-  };
+
   const userContact = () => {
     let UserContact = document.getElementById("userContact").value;
     setUserContact(UserContact);
@@ -200,8 +194,8 @@ export default function Navbar() {
     if (LastName != "") {
       setLastName("");
     }
-    if (UserName != "") {
-      setUserName("");
+    if (RegistrationID != "") {
+      setRegistrationID("");
     }
     if (UserContact != "") {
       setUserContact("");
@@ -222,36 +216,7 @@ export default function Navbar() {
 
   // const loginref = useRef(null);
 
-  // useEffect(() => {
-  //     const handleClickOutside = (event) => {
-  //         if (loginref.current && !loginref.current.contains(event.target)) {
-  //             setOutsideClick(1);
-  //         }
-  //         else{
-  //             setOutsideClick(0);
-  //         }
-  //     };
-  //     document.addEventListener('click', handleClickOutside, true);
-  //     return () => {
-  //         document.removeEventListener('click', handleClickOutside, true);
-  //     };
-  // });
 
-  useEffect(() => {
-    fetch("http://127.0.0.1:3000/api/cat/getAllCateg")
-      .then((response) => response.json())
-      .then((data) => setCategories(data))
-      .catch((error) => console.error(error));
-
-    if (
-      localStorage.getItem("uid") === "-1" ||
-      localStorage.getItem("uid") == null
-    ) {
-      setIsLogIn(0);
-    } else {
-      setIsLogIn(1);
-    }
-  }, []);
 
   const loginfunc = async () => {
     let user = {
@@ -280,6 +245,12 @@ export default function Navbar() {
     setIsLogIn(1);
     localStorage.setItem("token", res.accessToken);
     localStorage.setItem("uid", res.uid);
+    localStorage.setItem("isadmin", res.isAdmin);
+    console.log(res.isAdmin, "=>", typeof res.isAdmin)
+
+    if (res.isAdmin) {
+      setIsAdmin(1);
+    }
   };
 
   const profilefunc = async () => {
@@ -299,6 +270,7 @@ export default function Navbar() {
     localStorage.clear();
     setIsLogIn(0);
     a.setUserId(-1);
+    setIsAdmin(0);
     // Navigate("/");
   };
 
@@ -308,7 +280,7 @@ export default function Navbar() {
       name: s,
       email: newEmail,
       phone: UserContact,
-      address: UserName,
+      registration_id: RegistrationID,
       password: newPassword1,
     };
 
@@ -327,7 +299,22 @@ export default function Navbar() {
     let res = await fetchRes.json();
   };
 
-  const seachFun = async () => {};
+  useEffect(() => {
+
+    let id = localStorage.getItem("uid");
+    if (id != null) {
+      setIsLogIn(1);
+    }
+    id = localStorage.getItem("isadmin");
+    console.log(id,"=> ",typeof id)
+    if (id != null) {
+      setIsAdmin(1);
+    }
+    
+
+  }, []);
+
+
 
   return (
     <>
@@ -346,13 +333,14 @@ export default function Navbar() {
             >
               <span className="navbar-toggler-icon"></span>
             </button>
+
             <div
               className="collapse navbar-collapse"
               id="navbarSupportedContent"
             >
               <ul className="navbar-nav me-auto mb-2 mb-lg-0">
                 <li className="nav-item">
-                  <Link className="nav-link active" aria-current="page" to="/">
+                  <Link className="nav-link " aria-current="page" to="/">
                     Home
                   </Link>
                 </li>
@@ -361,49 +349,13 @@ export default function Navbar() {
                     About Us
                   </Link>
                 </li>
-                <li className="nav-item dropdown ">
-                  <a
-                    className="nav-link dropdown-toggle"
-                    href="#"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                  >
-                    
-                    {categories.length == 0 || a.selectedCategoryId == "null"
-                      ? "All"
-                      : categories[a.selectedCategoryId - 1].name}
-                  </a>
-                  <ul
-                    className="dropdown-menu custom-dropdown"
-                    id="myDropDownValues"
-                  >
-                    <li
-                      className="dropdown-item"
-                      onClick={() => a.setSelectedCategoryId("null")}
-                    >
-                      ALL
-                    </li>
 
-                    {categories.map((element) => {
-                      return (
-                        <li
-                          className="dropdown-item"
-                          key={element.id}
-                          onClick={() =>
-                            a.setSelectedCategoryId(`${element.id}`)
-                          }
-                        >
-                          {element.name}
-                        </li>
-                      );
-                    })}
-                  </ul>
-                  {/* {console.log(
-                    "THe select id is #######",
-                    a.selectedCategoryId
-                  )} */}
+                <li className="nav-item">
+                  <Link className="nav-link" to="/transaction">
+                    Booking
+                  </Link>
                 </li>
+
                 {isLogIn ? (
                   <li className="nav-item">
                     <Link
@@ -427,35 +379,11 @@ export default function Navbar() {
                     </Link>
                   </li>
                 )}
-                {/* <li className="nav-item">
-                  <Link
-                    className="nav-link disabled"
-                    aria-current="page"
-                    to="/profile"
-                    onClick={profilefunc}
-                  >
-                    Profile
-                  </Link>
-                </li> */}
+
               </ul>
 
               <ul className="navbar-nav  mb-2 mb-lg-0">
-                <li className="nav-item my-2">
-                  <form className="d-flex" role="search">
-                    <input
-                      className="form-control me-2"
-                      id="searchinfoinurl"
-                      type="search"
-                      value={infoInSearch}
-                      placeholder="Search"
-                      aria-label="Search"
-                      onChange={Search}
-                    />
-                    <button className="btn btn-outline-success" type="submit">
-                      Search
-                    </button>
-                  </form>
-                </li>
+
                 <li className="nav-item my-2 mx-3">
                   {localStorage.getItem("token") ? (
                     <Link to="/">
@@ -479,11 +407,16 @@ export default function Navbar() {
                     </button>
                   )}
                 </li>
-                <li className="nav-item my-2">
+                {isAdmin ? <li className="nav-item my-2">
                   <Link className="btn btn-outline-danger" to="/SellItem">
-                    Sell the item
+                    List the item
                   </Link>
-                </li>
+                </li> :
+                  <li className="nav-item  my-2">
+                    <Link className="btn btn-outline-danger disabled" to="/SellItem">
+                      List the item
+                    </Link>
+                  </li>}
               </ul>
             </div>
           </div>
@@ -507,7 +440,7 @@ export default function Navbar() {
                     <label
                       htmlFor="exampleInputEmail1"
                       className="form-label"
-                      id="username"
+                      id="exampleInputEmail3"
                     >
                       Email address <span style={{ color: "red" }}>*</span>
                     </label>
@@ -636,17 +569,18 @@ export default function Navbar() {
                       onChange={lastName}
                     />
                   </div>
+                  {console.log(RegistrationID)}
 
                   <div className="mb-3">
-                    <label htmlFor="userName" className="form-label">
-                      address <span style={{ color: "red" }}>*</span>
+                    <label htmlFor="registrationID" className="form-label">
+                      Registration ID <span style={{ color: "red" }}>*</span>
                     </label>
                     <input
                       type="text"
-                      value={UserName}
+                      value={RegistrationID}
                       className="form-control"
-                      id="userName"
-                      onChange={userName}
+                      id="registrationID"
+                      onChange={registrationID}
                     />
                   </div>
 
@@ -757,7 +691,7 @@ export default function Navbar() {
                   disabled={
                     FirstName.length === 0 ||
                     LastName.length === 0 ||
-                    UserName.length === 0 ||
+                    RegistrationID.length === 0 ||
                     ConfirmPassword === 0 ||
                     newEmail.length === 0 ||
                     passwordDifficulty === 0 ||

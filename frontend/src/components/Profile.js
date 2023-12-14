@@ -10,7 +10,6 @@ export default function Profile() {
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [userContact, setUserContact] = useState("");
-  const [userAddress, setUserAddress] = useState("");
   const [userMyProduct, setUserMyProduct] = useState([]);
   const [userFavProduct, setUserFavProduct] = useState([]);
 
@@ -25,7 +24,6 @@ export default function Profile() {
       setUserName(res.name);
       setUserContact(res.phone);
       setUserEmail(res.email);
-      setUserAddress(res.address);
     }
 
     async function fetchMyproduct() {
@@ -107,12 +105,7 @@ export default function Profile() {
                 </div>
               </div>
               <hr />
-              <div className="row mt-2">
-                <div className="col-sm-8">
-                  <h6 className="mb-0">Address : {userAddress}</h6>
-                </div>
-              </div>
-              <hr />
+              
               <div className="row mt-2">
                 <div className="col-sm-8">
                   <h6 className="mb-0">Email ID : {userEmail}</h6>
@@ -123,8 +116,8 @@ export default function Profile() {
           </div>
         </div>
         <hr />
-
-        {/* Favourite product list */}
+{/* 
+        Favourite product list
         <div className="container my-3">
           <h2 className="text-right">Favourite Products</h2>
           <div className="row my-3">
@@ -164,7 +157,7 @@ export default function Profile() {
               );
             })}
           </div>
-        </div>
+        </div> */}
       </div>
     </>
   );

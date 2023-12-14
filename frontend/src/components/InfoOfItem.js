@@ -3,7 +3,8 @@ import noteContext from "../context/notes/noteContext";
 
 export default function InfoOfItem(props) {
   const a = useContext(noteContext);
-  
+  const [intakeNumber,setInTakeNumber] = useState(0);
+  const [outtakeNumber,setOutTakeNumber] = useState(0);
   const [infoOfProd, setInfoOfProd] = useState({});
   const [infoOfSeller, setInfoOfSeller] = useState({});
   //   const [prodId, setprodId] = useState({});
@@ -14,16 +15,16 @@ export default function InfoOfItem(props) {
     async function fetchData() {
       try {
         const prodResponse = await fetch(
-          `http://127.0.0.1:3000/api/prod/findprodbyid/${a.id}`
+          `http://127.0.0.1:3000/api/items/findItembyid/${a.id}`
         );
         const prodData = await prodResponse.json();
         setInfoOfProd(prodData);
 
-        const sellerResponse = await fetch(
-          `http://127.0.0.1:3000/api/user/finduserbyid/${prodData.userId}`
-        );
-        const sellerData = await sellerResponse.json();
-        setInfoOfSeller(sellerData);
+        // const sellerResponse = await fetch(
+        //   `http://127.0.0.1:3000/api/user/finduserbyid/${prodData.userId}`
+        // );
+        // const sellerData = await sellerResponse.json();
+        // setInfoOfSeller(sellerData);
       } catch (error) {
         console.error(error);
       }
@@ -31,6 +32,25 @@ export default function InfoOfItem(props) {
 
     fetchData();
   }, []);
+
+  const handleChangein = () => {
+    let intake = document.getElementById("intakeNumber").value;
+    console.log(intake)
+    setInTakeNumber(intake);
+  }
+  const handleChangeout = () => {
+    let outtake = document.getElementById("outtakeNumber").value;
+    console.log(outtake)
+    setOutTakeNumber(outtake);
+  }
+
+  const ReturnItem = () =>{
+    
+  }
+  const BookedItem = () =>{
+
+
+  }
 
   //   useEffect(() => {
   //     fetch("http://127.0.0.1:3000/api/user/finduserbyid/" + infoOfProd.userId)
@@ -65,7 +85,7 @@ export default function InfoOfItem(props) {
                       <button
                         type="button"
                         data-bs-target="#carouselExampleIndicators"
-                        data-bs-slide-to="0"
+                         data-bs-slide-to="0"
                         className="active"
                         aria-current="true"
                         aria-label="Slide 1"
@@ -140,24 +160,40 @@ export default function InfoOfItem(props) {
                   </div>
                 </div>
                 <div className="col-sm-4 text-dark   rounded-left CustomItemBody">
-                  <h1>Price: {infoOfProd.price} rs</h1>
-                  <h1>Seller : {infoOfSeller.name}</h1>
-                  <h3>Location: {infoOfSeller.address}</h3>
-                  <h3>Contact: {infoOfSeller.phone}</h3>
-                  <h3>Email: {infoOfSeller.email}</h3>
-                  <h3>Quantity: {infoOfProd.quantity}</h3>
+                  <div className="container">
+                    <h1>Name: {infoOfProd.name} </h1>
+                    <div className="row">
+                      <div className="col-sm-3 m-2"><h4>Quantity</h4></div>
+                      <div className="col-sm-2 m-2">
+                        <select onChange={handleChangein} id="intakeNumber" >
+                          {
+                            [...Array(infoOfProd.quantity)].map((_, i) => i + 1)
+                              .map(i => <option key={i} value={i}>{i}</option>)
+                          }
+                        </select>
+                      </div>
+
+                      <button type="button" className="btn btn-primary btn-sm col-sm-3" onClick={BookedItem}>Booked</button>
+                    </div>
+
+                    <div className="row mt-3">
+                      <div className="col-sm-3 m-2"><h4>Return</h4></div>
+                      <div className="col-sm-2 m-2">
+                        <select onChange={handleChangeout} id="outtakeNumber" >
+                          {
+                            [...Array(infoOfProd.quantity)].map((_, i) => i + 1)
+                              .map(i => <option key={i} value={i}>{i}</option>)
+                          }
+                        </select>
+                      </div>
+
+                      <button type="button" className="btn btn-primary btn-sm col-sm-3" onClick={ReturnItem}>Return</button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              <div className="row z-depth-3 my-4">
-                <div className="col-sm-8  rounded-left">
-                  <h1>
-                    <strong>Description</strong>
-                  </h1>
-                  <br />
-                  <h2>{infoOfProd.description}</h2>
-                </div>
-              </div>
+
             </div>
           </div>
         </div>
